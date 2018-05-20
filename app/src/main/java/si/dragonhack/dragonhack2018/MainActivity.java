@@ -16,6 +16,7 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.net.Uri;
 import android.os.Build;
+import android.os.CountDownTimer;
 import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
@@ -28,6 +29,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -58,6 +60,17 @@ public class MainActivity extends AppCompatActivity implements OnStepDetected, O
     public static final String BPMNUMBER = "bpmNumber";
     public static final String BPM = "bpm";
 
+    ImageView motivateBtn;
+    ImageView followBtn;
+    ImageView subBG;
+
+    ImageView backButton;
+    ImageView forwardButton;
+    ImageView playPauseBtn;
+
+    boolean followMe = true;
+    boolean isPlaying = true;
+
 
     public static SharedPreferences sharedPreferences;
     public static ApiClient apiClient;
@@ -86,21 +99,33 @@ public class MainActivity extends AppCompatActivity implements OnStepDetected, O
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        motivateBtn = findViewById(R.id.motivateBtn);
+        followBtn = findViewById(R.id.followMeBtn);
+        subBG = findViewById(R.id.subBG);
 
-        footCnt = (TextView) findViewById(R.id.test_view);
-        bpmCountTv = findViewById(R.id.bpm_cnt);
-        resetBt = (Button) findViewById(R.id.reset_cnt);
+        backButton = findViewById(R.id.BackBtn);
+        forwardButton = findViewById(R.id.forwardBtn);
+        playPauseBtn = findViewById(R.id.PlayBtn);
+
+
+        //footCnt = (TextView) findViewById(R.id.test_view);
+        //bpmCountTv = findViewById(R.id.bpm_cnt);
+        //resetBt = (Button) findViewById(R.id.reset_cnt);
+        /*
         resetBt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 stepCount = 0;
                 try {
-                    footCnt.setText(String.valueOf(stepCount));
+                   // footCnt.setText(String.valueOf(stepCount));
                 } catch (Exception e)
                 {
                 }
             }
         });
+        */
+
+        /*
         setLimitEt = (EditText) findViewById(R.id.limit);
         setLimitEt.setText(String.valueOf(mLimit));
         setLimitEt.addTextChangedListener(new TextWatcher() {
@@ -123,6 +148,8 @@ public class MainActivity extends AppCompatActivity implements OnStepDetected, O
 
             }
         });
+
+        */
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(ApiClient.BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
@@ -177,6 +204,70 @@ public class MainActivity extends AppCompatActivity implements OnStepDetected, O
         //MusicManager.getInstance().startSong();
 
     }
+
+
+    public void switchToMotivate(View view){
+        if(followMe == true){
+            subBG.setImageResource(R.drawable.sub_bg_motivate);
+            motivateBtn.setImageResource(R.drawable.active_btn_motivate_fill);
+            followBtn.setImageResource(R.drawable.follow_me_btn_grey);
+            followMe = false;
+        }
+    }
+
+    public void switchToFollow(View view){
+        if(followMe == false){
+            subBG.setImageResource(R.drawable.sub_bg);
+            motivateBtn.setImageResource(R.drawable.grey_btn_motivate);
+            followBtn.setImageResource(R.drawable.follow_me_btn_active_fill);
+            followMe = true;
+        }
+    }
+
+    public void goBack(View view){
+
+        backButton.setImageResource(R.drawable.back_btn_click);
+
+        new CountDownTimer(100, 1000) { // 5000 = 5 sec
+
+            public void onTick(long millisUntilFinished) {
+            }
+
+            public void onFinish() {
+                backButton.setImageResource(R.drawable.back_btn_w);
+            }
+        }.start();
+    }
+
+    public void goForward(View view){
+
+        forwardButton.setImageResource(R.drawable.forward_btn_click);
+
+        new CountDownTimer(100, 1000) { // 5000 = 5 sec
+
+            public void onTick(long millisUntilFinished) {
+            }
+
+            public void onFinish() {
+                forwardButton.setImageResource(R.drawable.forward_btn_w);
+            }
+        }.start();
+    }
+
+    public void playPause(View view){
+
+        if(isPlaying == false){
+            playPauseBtn.setImageResource(R.drawable.pause_btn);
+            isPlaying = true;
+        }
+        else{
+            playPauseBtn.setImageResource(R.drawable.play_btn_w);
+            isPlaying = false;
+        }
+    }
+
+
+
 
     private String getRealPathFromURI(Uri contentUri,Context context) {
         Uri musicUri = android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
@@ -514,13 +605,13 @@ public class MainActivity extends AppCompatActivity implements OnStepDetected, O
     @Override
     public void onStep(int arg) {
         stepCount++;
-        footCnt.setText(String.valueOf(stepCount));
+        //footCnt.setText(String.valueOf(stepCount));
     }
 
 
     @Override
     public void onBpmChanged(int bpm) {
-        bpmCountTv.setText(String.valueOf(bpm));
+      //  bpmCountTv.setText(String.valueOf(bpm));
     }
 
     @Override

@@ -1,47 +1,121 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.widget.RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
-    <TextView
-        android:id="@+id/step_cnt"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Step count:"/>
 
-    <TextView
-        android:id="@+id/test_view"
+    <ImageView
+        android:id="@+id/logoImageView"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text=""
-        android:layout_toRightOf="@id/step_cnt"
-         />
-    <EditText
-        android:id="@+id/limit"
-        android:width="50dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp"
-        android:layout_marginTop="10dp"/>
-    <Button
-        android:layout_below="@id/limit"
-        android:id="@+id/reset_cnt"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Reset"/>
-    <TextView
-        android:id="@+id/bpm_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/reset_cnt"
-        android:text="BPM:"/>
-    <TextView
-        android:id="@+id/bpm_cnt"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/bpm_text"
-        android:layout_below="@id/reset_cnt"/>
+        android:layout_height="20dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="18dp"
+        app:srcCompat="@drawable/logo" />
 
-</RelativeLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="56dp"
+        android:background="@color/darkGrey" />
+
+    <!--<ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="189dp"
+        android:layout_height="188dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="142dp"
+        app:srcCompat="@drawable/album_cover1" />-->
+
+    <android.widget.RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="56dp"
+        android:layout_marginBottom="98dp">
+
+        <ImageView
+            android:id="@+id/subBG"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginEnd="14dp"
+            android:layout_marginStart="14dp"
+            android:layout_marginTop="14dp"
+            android:scaleType="fitXY"
+            app:srcCompat="@drawable/sub_bg" />
+
+        <ImageView
+            android:id="@+id/motivateBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginEnd="25dp"
+            android:layout_marginTop="23dp"
+            android:onClick="switchToMotivate"
+            app:srcCompat="@drawable/grey_btn_motivate" />
+
+        <ImageView
+            android:id="@+id/followMeBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="25dp"
+            android:layout_marginTop="23dp"
+            android:onClick="switchToFollow"
+            app:srcCompat="@drawable/follow_me_btn_active_fill" />
+
+        <ImageView
+            android:id="@+id/albumCover"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            app:srcCompat="@drawable/empty_album_cover" />
+    </android.widget.RelativeLayout>
+
+    <android.widget.RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="84dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:background="@drawable/footer_bg">
+
+        <ImageView
+            android:id="@+id/PlayBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_centerVertical="true"
+            android:onClick="playPause"
+            app:srcCompat="@drawable/play_btn_w" />
+
+        <ImageView
+            android:id="@+id/BackBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="62dp"
+            android:onClick="goBack"
+            app:srcCompat="@drawable/back_btn_w" />
+
+        <ImageView
+            android:id="@+id/forwardBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="62dp"
+            android:onClick="goForward"
+            app:srcCompat="@drawable/forward_btn_w" />
+    </android.widget.RelativeLayout>
+
+
+</android.widget.RelativeLayout>
