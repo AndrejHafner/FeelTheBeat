@@ -17,7 +17,7 @@ import java.util.TimerTask;
 public class MusicManager implements OnStepDetected {
     private static MusicManager mInstance;
     private final int UPDATE_BPM_INTERVAL = 5000;
-    private final int MUSIC_CHANGE_THRESHOLD = 5; // +- 5 bpm to change song
+    private final int MUSIC_CHANGE_THRESHOLD = 8; // +- 5 bpm to change song
     private final int CHANGE_AFTER_TIME = 30; // time after which the changing of the song starts working
 
     public enum MusicEvents
@@ -48,6 +48,7 @@ public class MusicManager implements OnStepDetected {
     private ChangeSongMode changeSongMode = ChangeSongMode.CHANGE_SONG;
 
     private int stepCount = 0;
+    int currentSongIdx = 1;
     private int bpm = 100;
     private int songStartedBpm = 0;
     private boolean isPlaying;
@@ -92,9 +93,12 @@ public class MusicManager implements OnStepDetected {
         else
         {
             isStarted = true;
-            currentSong = findAppropriateSong();
+//            currentSong = findAppropriateSong();
             // TODO set to current song bpm
-            String path = currentSong.getPathUri().getPath();
+            if(currentSong == null)
+                currentSong = findAppropriateSong();
+
+                String path = currentSong.getPathUri().getPath();
             try {
 //            mp.setDataSource(path + File.separator + fileName);
                 //mp.release();
@@ -109,14 +113,14 @@ public class MusicManager implements OnStepDetected {
             }
         }
 
-        publishSongChangedhanged(MusicEvents.STARTED);
+        publishSongChangedhanged(MusicEvents.STARTED,currentSong);
     }
 
     void pauseSong()
     {
         isPlaying = false;
         mp.pause();
-        publishSongChangedhanged(MusicEvents.PAUSED);
+        publishSongChangedhanged(MusicEvents.PAUSED,currentSong);
 
     }
 
@@ -126,17 +130,54 @@ public class MusicManager implements OnStepDetected {
         isStarted = false;
         mp.stop();
 //        mp.release();
-        publishSongChangedhanged(MusicEvents.STOPPED);
+        publishSongChangedhanged(MusicEvents.STOPPED,currentSong);
 
     }
 
-    void changeSong()
+    void changeSong(boolean previous)
     {
+        if(previous)
+        {
+
+            currentSongIdx++;
+            while(currentSongIdx >= 0 && currentSongIdx < GetSongs.songs.size() && !(currentSong = GetSongs.songs.get(currentSongIdx)).getPathUri().toString().contains(".mp3"))
+            {
+                currentSongIdx++;
+                if(currentSongIdx > GetSongs.songs.size() - 2)
+                {
+                    currentSongIdx = 1;
+                }
+            }
+        }
+        else
+        {
+            if(currentSongIdx <= 1)
+            {
+                currentSongIdx = GetSongs.songs.size()-1;
+            }
+            else
+            {
+                currentSongIdx--;
+            }
+            while(currentSongIdx >= 0 && currentSongIdx < GetSongs.songs.size() && !(currentSong = GetSongs.songs.get(currentSongIdx)).getPathUri().toString().contains(".mp3"))
+            {
+                currentSongIdx--;
+                if(currentSongIdx <= 1)
+                {
+                    currentSongIdx = GetSongs.songs.size()-1;
+                }
+            }
+        }
         // TODO set to current song bpm
 //        mp.release();
-        publishSongChangedhanged(MusicEvents.SONG_CHANGED);
+        songStartedBpm = currentSong.getBpm();
+        Log.i("MusicChanged","Playing song with bpm "+currentSong.getBpm());
+        stopSong();
+        startSong();
+        publishSongChangedhanged(MusicEvents.SONG_CHANGED,currentSong);
 
     }
+
 
     Song findAppropriateSong()
     {
@@ -151,7 +192,7 @@ public class MusicManager implements OnStepDetected {
 
     void changeSongMetrics()
     {
-        if(changeSongMode == ChangeSongMode.CHANGE_SONG && Math.abs(songStartedBpm - bpm) > MUSIC_CHANGE_THRESHOLD)
+        if(changeSongMode == ChangeSongMode.CHANGE_SONG && Math.abs(songStartedBpm - bpm) > MUSIC_CHANGE_THRESHOLD && stepCount >50)
         {
             // todo FIND A new song with a required bpm and change to it
             currentSong = findAppropriateSong();
@@ -159,23 +200,23 @@ public class MusicManager implements OnStepDetected {
             Log.i("MusicChanged","Playing song with bpm "+currentSong.getBpm());
             stopSong();
             startSong();
-            publishSongChangedhanged(MusicEvents.SONG_SPEED_CHANGED);
-        } else if (changeSongMode == ChangeSongMode.CHANGE_BPM && Math.abs(songStartedBpm - bpm) > MUSIC_CHANGE_THRESHOLD)
+            publishSongChangedhanged(MusicEvents.SONG_CHANGED,currentSong);
+        } else if (changeSongMode == ChangeSongMode.CHANGE_BPM && Math.abs(songStartedBpm - bpm) > MUSIC_CHANGE_THRESHOLD && stepCount > 50)
         {
             // change bpm
-            publishSongChangedhanged(MusicEvents.SONG_SPEED_CHANGED);
+           // publishSongChangedhanged(MusicEvents.SONG_SPEED_CHANGED);
 
         }
 
 
         if(playSongMode == PlaySongMode.FOLLOW_USER && Math.abs(songStartedBpm - bpm) > MUSIC_CHANGE_THRESHOLD)
         {
-            publishSongChangedhanged(MusicEvents.SONG_SPEED_CHANGED);
+            //publishSongChangedhanged(MusicEvents.SONG_SPEED_CHANGED);
 
         }
         else if (playSongMode == PlaySongMode.MOTIVATE_USER && Math.abs(songStartedBpm - bpm) > MUSIC_CHANGE_THRESHOLD)
         {
-            publishSongChangedhanged(MusicEvents.SONG_SPEED_CHANGED);
+            //publishSongChangedhanged(MusicEvents.SONG_SPEED_CHANGED);
 
         }
 
@@ -272,10 +313,10 @@ public class MusicManager implements OnStepDetected {
         }
     }
 
-    private void publishSongChangedhanged(MusicEvents event)
+    private void publishSongChangedhanged(MusicEvents event,Song song)
     {
         for (OnMusicDecisionChanged listener: listeners) {
-            listener.onMusicChanged(event);
+            listener.onMusicChanged(event,song);
         }
 
     }

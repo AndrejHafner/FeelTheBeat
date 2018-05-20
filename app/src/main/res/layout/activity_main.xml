@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.widget.RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<android.widget.RelativeLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -13,7 +13,7 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="18dp"
-        app:srcCompat="@drawable/logo" />
+        android:src="@drawable/logo" />
 
     <View
         android:layout_width="match_parent"
@@ -48,7 +48,7 @@
             android:layout_marginStart="14dp"
             android:layout_marginTop="14dp"
             android:scaleType="fitXY"
-            app:srcCompat="@drawable/sub_bg" />
+            android:src="@drawable/sub_bg" />
 
         <ImageView
             android:id="@+id/motivateBtn"
@@ -59,7 +59,7 @@
             android:layout_marginEnd="25dp"
             android:layout_marginTop="23dp"
             android:onClick="switchToMotivate"
-            app:srcCompat="@drawable/grey_btn_motivate" />
+            android:src="@drawable/grey_btn_motivate" />
 
         <ImageView
             android:id="@+id/followMeBtn"
@@ -70,14 +70,44 @@
             android:layout_marginStart="25dp"
             android:layout_marginTop="23dp"
             android:onClick="switchToFollow"
-            app:srcCompat="@drawable/follow_me_btn_active_fill" />
+            android:src="@drawable/follow_me_btn_active_fill" />
 
         <ImageView
             android:id="@+id/albumCover"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            app:srcCompat="@drawable/empty_album_cover" />
+            android:scaleType="fitXY"
+            android:src="@drawable/empty_album_cover" />
+        <TextView
+            android:id="@+id/song_artist"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="280dp"
+            android:layout_below="@id/albumCover"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:layout_centerHorizontal="true"
+            />
+        <TextView
+            android:id="@+id/song_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="305dp"
+            android:layout_below="@id/albumCover"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:layout_centerHorizontal="true"
+            />
+        <TextView
+            android:id="@+id/bpm_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="395dp"
+            android:layout_below="@id/albumCover"
+            android:textSize="15sp"
+            android:layout_centerHorizontal="true"
+            />
     </android.widget.RelativeLayout>
 
     <android.widget.RelativeLayout
@@ -94,7 +124,7 @@
             android:layout_centerInParent="true"
             android:layout_centerVertical="true"
             android:onClick="playPause"
-            app:srcCompat="@drawable/play_btn_w" />
+            android:src="@drawable/play_btn_w" />
 
         <ImageView
             android:id="@+id/BackBtn"
@@ -104,7 +134,7 @@
             android:layout_centerVertical="true"
             android:layout_marginStart="62dp"
             android:onClick="goBack"
-            app:srcCompat="@drawable/back_btn_w" />
+            android:src="@drawable/back_btn_w" />
 
         <ImageView
             android:id="@+id/forwardBtn"
@@ -114,7 +144,7 @@
             android:layout_centerVertical="true"
             android:layout_marginEnd="62dp"
             android:onClick="goForward"
-            app:srcCompat="@drawable/forward_btn_w" />
+            android:src="@drawable/forward_btn_w" />
     </android.widget.RelativeLayout>
 
 

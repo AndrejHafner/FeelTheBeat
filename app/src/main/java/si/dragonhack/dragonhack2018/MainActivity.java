@@ -20,8 +20,6 @@ import android.os.CountDownTimer;
 import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -52,7 +50,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class MainActivity extends AppCompatActivity implements OnStepDetected, OnMusicDecisionChanged{
+public class MainActivity extends Activity implements OnStepDetected, OnMusicDecisionChanged{
 
     public static final String INIT = "init";
     public static final String MY_PREFS = "myPrefs";
@@ -63,10 +61,12 @@ public class MainActivity extends AppCompatActivity implements OnStepDetected, O
     ImageView motivateBtn;
     ImageView followBtn;
     ImageView subBG;
-
+    ImageView albumIv;
     ImageView backButton;
     ImageView forwardButton;
     ImageView playPauseBtn;
+    TextView songNameTv;
+    TextView songArtistTv;
 
     boolean followMe = true;
     boolean isPlaying = true;
@@ -76,11 +76,9 @@ public class MainActivity extends AppCompatActivity implements OnStepDetected, O
     public static ApiClient apiClient;
     SensorManager sensorManager;
     Sensor mSensor;
-    TextView footCnt;
-    Button resetBt;
-    EditText setLimitEt;
+    TextView bpmTv;
+
     StepDetector stepDetector;
-    TextView bpmCountTv;
     public static int songsCount = 0;
     int stepCount = 0;
     private final static String TAG = "StepDetector";
@@ -93,21 +91,22 @@ public class MainActivity extends AppCompatActivity implements OnStepDetected, O
     private float   mLastExtremes[][] = { new float[3*2], new float[3*2] };
     private float   mLastDiff[] = new float[3*2];
     private int     mLastMatch = -1;
-
+    private int imgcnt = 0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        albumIv = findViewById(R.id.albumCover);
         motivateBtn = findViewById(R.id.motivateBtn);
         followBtn = findViewById(R.id.followMeBtn);
         subBG = findViewById(R.id.subBG);
-
+        bpmTv = findViewById(R.id.bpm_tv);
+        songNameTv = findViewById(R.id.song_name);
         backButton = findViewById(R.id.BackBtn);
         forwardButton = findViewById(R.id.forwardBtn);
         playPauseBtn = findViewById(R.id.PlayBtn);
 
-
+        songArtistTv = findViewById(R.id.song_artist);
         //footCnt = (TextView) findViewById(R.id.test_view);
         //bpmCountTv = findViewById(R.id.bpm_cnt);
         //resetBt = (Button) findViewById(R.id.reset_cnt);
@@ -195,9 +194,10 @@ public class MainActivity extends AppCompatActivity implements OnStepDetected, O
         }
         if(sharedPreferences.getBoolean(INIT, true)) {
             GetSongs.getSongList(this);
+            String fullPath = getRealPathFromURI(Uri.parse("content://external/audio/media/217"),getApplicationContext());
+
         }
 
-        //String fullPath = getRealPathFromURI(Uri.parse("content://external/audio/media/217"),getApplicationContext());
 
 
 
@@ -226,6 +226,8 @@ public class MainActivity extends AppCompatActivity implements OnStepDetected, O
 
     public void goBack(View view){
 
+        MusicManager.getInstance().changeSong(true);
+
         backButton.setImageResource(R.drawable.back_btn_click);
 
         new CountDownTimer(100, 1000) { // 5000 = 5 sec
@@ -241,6 +243,7 @@ public class MainActivity extends AppCompatActivity implements OnStepDetected, O
 
     public void goForward(View view){
 
+        MusicManager.getInstance().changeSong(false);
         forwardButton.setImageResource(R.drawable.forward_btn_click);
 
         new CountDownTimer(100, 1000) { // 5000 = 5 sec
@@ -258,10 +261,12 @@ public class MainActivity extends AppCompatActivity implements OnStepDetected, O
 
         if(isPlaying == false){
             playPauseBtn.setImageResource(R.drawable.pause_btn);
+            MusicManager.getInstance().startSong();
             isPlaying = true;
         }
         else{
             playPauseBtn.setImageResource(R.drawable.play_btn_w);
+            MusicManager.getInstance().pauseSong();
             isPlaying = false;
         }
     }
@@ -604,18 +609,36 @@ public class MainActivity extends AppCompatActivity implements OnStepDetected, O
 
     @Override
     public void onStep(int arg) {
-        stepCount++;
-        footCnt.setText(String.valueOf(stepCount));
+//        stepCount++;
+//        footCnt.setText(String.valueOf(stepCount));
     }
 
 
     @Override
     public void onBpmChanged(int bpm) {
-        bpmCountTv.setText(String.valueOf(bpm));
+//        bpmCountTv.setText(String.valueOf(bpm));
+        bpmTv.setText(bpm + " beats per minute");
     }
 
     @Override
-    public void onMusicChanged(MusicManager.MusicEvents event) {
+    public void onMusicChanged(MusicManager.MusicEvents event,Song song) {
+        if(song != null) {
+            songNameTv.setText(song.getTitle());
+            songArtistTv.setText(song.getArtist());
+            if(song.getArtist().contains("Elvis"))
+            {
+                albumIv.setImageResource(R.mipmap.elvis_jackson_cover);
+            }
+            else if(song.getArtist().contains("Naked"))
+            {
+                albumIv.setImageResource(R.drawable.naked);
+            }
+            else
+            {
+                albumIv.setImageResource(R.drawable.empty_album_cover);
+
+            }
+        }
 
     }
 }
