@@ -41,6 +41,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Map;
+import java.util.TreeMap;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -53,6 +55,8 @@ public class MainActivity extends AppCompatActivity implements OnStepDetected, O
     public static final String INIT = "init";
     public static final String MY_PREFS = "myPrefs";
     public static final String SONGS = "songs";
+    public static final String BPMNUMBER = "bpmNumber";
+    public static final String BPM = "bpm";
 
 
     public static SharedPreferences sharedPreferences;
@@ -262,8 +266,29 @@ public class MainActivity extends AppCompatActivity implements OnStepDetected, O
         editor.putBoolean(INIT, false);
         JSONArray arr = new JSONArray();
 
+        TreeMap<Integer, Integer> frequencies = new TreeMap<Integer, Integer>();
+
         for(Song song : GetSongs.songs) {
             arr.put(song.toJSONobj());
+            if (frequencies.get(new Integer(song.getBpm())) == null) {
+                frequencies.put(new Integer(song.getBpm()), 1);
+            } else {
+                frequencies.put(new Integer(song.getBpm()), new Integer(song.getBpm() + 1));
+            }
+        }
+
+        if(!frequencies.isEmpty()) {
+            int max = 0;
+            int bpm = -1;
+            for(Map.Entry<Integer, Integer> entry : frequencies.entrySet()) {
+                if(bpm == -1 || max < entry.getValue()) {
+                    max = entry.getValue();
+                    bpm = entry.getKey();
+                }
+            }
+            editor.putInt(BPMNUMBER, max);
+            editor.putInt(BPM, bpm);
+            System.out.printf("Bpm %d se pojavi %d-krat!", bpm, max);
         }
 
         editor.putString(SONGS, arr.toString());

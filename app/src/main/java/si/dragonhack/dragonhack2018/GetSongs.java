@@ -12,10 +12,13 @@ import android.provider.MediaStore;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.TreeMap;
 
 public class GetSongs {
 
     public static List<Song> songs = new ArrayList<>();
+    public static int maximum = 0;
+    public static int maxBpm = -1;
 
 
 
@@ -76,6 +79,10 @@ public class GetSongs {
 
 
     public static void getSongList(Context context) {
+
+        TreeMap<Integer, Integer> frequencies = new TreeMap<Integer, Integer>();
+
+
         //retrieve song info
         ContentResolver musicResolver = context.getContentResolver();
         Uri musicUri = android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
