@@ -117,7 +117,7 @@ public class MainActivity extends AppCompatActivity implements OnStepDetected, O
             public void onClick(View view) {
                 stepCount = 0;
                 try {
-                   // footCnt.setText(String.valueOf(stepCount));
+                    footCnt.setText(String.valueOf(stepCount));
                 } catch (Exception e)
                 {
                 }
@@ -605,13 +605,13 @@ public class MainActivity extends AppCompatActivity implements OnStepDetected, O
     @Override
     public void onStep(int arg) {
         stepCount++;
-        //footCnt.setText(String.valueOf(stepCount));
+        footCnt.setText(String.valueOf(stepCount));
     }
 
 
     @Override
     public void onBpmChanged(int bpm) {
-      //  bpmCountTv.setText(String.valueOf(bpm));
+        bpmCountTv.setText(String.valueOf(bpm));
     }
 
     @Override

@@ -3,6 +3,7 @@ package si.dragonhack.dragonhack2018;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Handler;
+import android.util.Log;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -50,11 +51,14 @@ public class MusicManager implements OnStepDetected {
     private int bpm = 100;
     private int songStartedBpm = 0;
     private boolean isPlaying;
+    private boolean isStarted;
     private long secondsLasted;
     private long secondsStarted;
     private boolean measuring = false;
+    private Song currentSong;
     private final Handler handler = new Handler();
     Timer timer = new Timer(false);
+    MediaPlayer mp = new MediaPlayer();
 
 
     public static MusicManager getInstance()
@@ -80,17 +84,38 @@ public class MusicManager implements OnStepDetected {
     void startSong()
     {
         isPlaying = true;
-        // TODO set to current song bpm
-        Uri uri = GetSongs.songs.get(0).getPathUri();
-        String path = uri.getPath();
-        audioPlayer("/storage/emulated/0/Samsung/Music/Over_the_Horizon.mp3","");
+        if(isStarted)
+        {
+            //re start the song
+            mp.start();
+        }
+        else
+        {
+            isStarted = true;
+            currentSong = findAppropriateSong();
+            // TODO set to current song bpm
+            String path = currentSong.getPathUri().getPath();
+            try {
+//            mp.setDataSource(path + File.separator + fileName);
+                //mp.release();
+                mp.reset();
+                mp.setDataSource(path);
+
+                mp.prepare();
+                mp.start();
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
         publishSongChangedhanged(MusicEvents.STARTED);
     }
 
     void pauseSong()
     {
         isPlaying = false;
-
+        mp.pause();
         publishSongChangedhanged(MusicEvents.PAUSED);
 
     }
@@ -98,7 +123,9 @@ public class MusicManager implements OnStepDetected {
     void stopSong()
     {
         isPlaying = false;
-
+        isStarted = false;
+        mp.stop();
+//        mp.release();
         publishSongChangedhanged(MusicEvents.STOPPED);
 
     }
@@ -106,17 +133,32 @@ public class MusicManager implements OnStepDetected {
     void changeSong()
     {
         // TODO set to current song bpm
-
+//        mp.release();
         publishSongChangedhanged(MusicEvents.SONG_CHANGED);
 
     }
 
+    Song findAppropriateSong()
+    {
+        for (Song song: GetSongs.songs ) {
+            if(Math.abs(song.getBpm() - bpm) <= 5 && song.getPathUri().toString().contains(".mp3"))
+            {
+                return song;
+            }
+        }
+        return GetSongs.songs.get(1);
+    }
 
     void changeSongMetrics()
     {
         if(changeSongMode == ChangeSongMode.CHANGE_SONG && Math.abs(songStartedBpm - bpm) > MUSIC_CHANGE_THRESHOLD)
         {
             // todo FIND A new song with a required bpm and change to it
+            currentSong = findAppropriateSong();
+            songStartedBpm = currentSong.getBpm();
+            Log.i("MusicChanged","Playing song with bpm "+currentSong.getBpm());
+            stopSong();
+            startSong();
             publishSongChangedhanged(MusicEvents.SONG_SPEED_CHANGED);
         } else if (changeSongMode == ChangeSongMode.CHANGE_BPM && Math.abs(songStartedBpm - bpm) > MUSIC_CHANGE_THRESHOLD)
         {
@@ -186,6 +228,8 @@ public class MusicManager implements OnStepDetected {
 
     private void calculateBpm()
     {
+        secondsLasted = (System.currentTimeMillis() - secondsStarted) / 1000;
+
         if(secondsLasted > 0)
         {
             bpm = (int)((float) stepCount / (((float) secondsLasted) / 60f));
@@ -217,7 +261,6 @@ public class MusicManager implements OnStepDetected {
         if(measuring)
         {
             stepCount++;
-            secondsLasted = (System.currentTimeMillis() - secondsStarted) / 1000;
         }
 
     }

@@ -81,7 +81,7 @@ public class StepDetector implements SensorEventListener {
                         boolean isNotContra = (mLastMatch != 1 - extType);
 
                         if (isAlmostAsLargeAsPrevious && isPreviousLargeEnough && isNotContra) {
-                            Log.i(TAG, "step");
+//                            Log.i(TAG, "step");
                             //stepCount++;
                             //footCnt.setText(String.valueOf(stepCount));
                             for (OnStepDetected listener: listeners) {
