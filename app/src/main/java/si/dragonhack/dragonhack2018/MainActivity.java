@@ -2,6 +2,7 @@ package si.dragonhack.dragonhack2018;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Context;
@@ -10,6 +11,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -21,6 +24,7 @@ import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -72,6 +76,7 @@ public class MainActivity extends Activity implements OnStepDetected, OnMusicDec
     boolean isPlaying = true;
 
 
+
     public static SharedPreferences sharedPreferences;
     public static ApiClient apiClient;
     SensorManager sensorManager;
@@ -92,6 +97,7 @@ public class MainActivity extends Activity implements OnStepDetected, OnMusicDec
     private float   mLastDiff[] = new float[3*2];
     private int     mLastMatch = -1;
     private int imgcnt = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -105,8 +111,8 @@ public class MainActivity extends Activity implements OnStepDetected, OnMusicDec
         backButton = findViewById(R.id.BackBtn);
         forwardButton = findViewById(R.id.forwardBtn);
         playPauseBtn = findViewById(R.id.PlayBtn);
-
         songArtistTv = findViewById(R.id.song_artist);
+
         //footCnt = (TextView) findViewById(R.id.test_view);
         //bpmCountTv = findViewById(R.id.bpm_cnt);
         //resetBt = (Button) findViewById(R.id.reset_cnt);
@@ -149,6 +155,7 @@ public class MainActivity extends Activity implements OnStepDetected, OnMusicDec
         });
 
         */
+
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(ApiClient.BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
@@ -167,6 +174,9 @@ public class MainActivity extends Activity implements OnStepDetected, OnMusicDec
         MusicManager.getInstance().startMeasuring();
         sharedPreferences = getSharedPreferences(MY_PREFS, Context.MODE_PRIVATE);
 
+
+
+
         String res = sharedPreferences.getString(SONGS,"");
         try {
             JSONArray jsonArray = new JSONArray(res);
@@ -178,6 +188,8 @@ public class MainActivity extends Activity implements OnStepDetected, OnMusicDec
         } catch (Exception e ) {
             e.printStackTrace();
         }
+
+
         /* Check for read files permission */
         if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -186,25 +198,32 @@ public class MainActivity extends Activity implements OnStepDetected, OnMusicDec
                     Manifest.permission.READ_EXTERNAL_STORAGE)) {
 
             }
-
             requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
                     0);
 
             return;
         }
+
+
+
+
+
+    }
+
+
+
+
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if(sharedPreferences.getBoolean(INIT, true)) {
             GetSongs.getSongList(this);
             String fullPath = getRealPathFromURI(Uri.parse("content://external/audio/media/217"),getApplicationContext());
 
         }
-
-
-
-
-        //MusicManager.getInstance().startSong();
-
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
-
 
     public void switchToMotivate(View view){
         if(followMe == true){
@@ -259,7 +278,7 @@ public class MainActivity extends Activity implements OnStepDetected, OnMusicDec
 
     public void playPause(View view){
 
-        if(isPlaying == false){
+        if(!isPlaying){
             playPauseBtn.setImageResource(R.drawable.pause_btn);
             MusicManager.getInstance().startSong();
             isPlaying = true;
@@ -274,7 +293,7 @@ public class MainActivity extends Activity implements OnStepDetected, OnMusicDec
 
 
 
-    private String getRealPathFromURI(Uri contentUri,Context context) {
+    private String getRealPathFromURI(Uri contentUri, Context context) {
         Uri musicUri = android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
         ContentResolver musicResolver = context.getContentResolver();
 
@@ -404,7 +423,7 @@ public class MainActivity extends Activity implements OnStepDetected, OnMusicDec
         String lookup = "&lookup=lookup=" + parseSong(song) + "%20" + parseArtist(artist);
         String URL =  apiKey + type + lookup;
 
-        final Song newSong = new Song("", "", 0, null, 0);
+        final Song newSong = new Song("", "", 0, null, 0, "");
 
         Call<Object> callGetSongsBpm = apiClient.getSongsBpm(URL);
         callGetSongsBpm.enqueue(new Callback<Object>() {
@@ -617,7 +636,7 @@ public class MainActivity extends Activity implements OnStepDetected, OnMusicDec
     @Override
     public void onBpmChanged(int bpm) {
 //        bpmCountTv.setText(String.valueOf(bpm));
-        bpmTv.setText(bpm + " beats per minute");
+        bpmTv.setText(bpm + " beats per minute.");
     }
 
     @Override
@@ -625,19 +644,16 @@ public class MainActivity extends Activity implements OnStepDetected, OnMusicDec
         if(song != null) {
             songNameTv.setText(song.getTitle());
             songArtistTv.setText(song.getArtist());
-            if(song.getArtist().contains("Elvis"))
-            {
-                albumIv.setImageResource(R.mipmap.elvis_jackson_cover);
-            }
-            else if(song.getArtist().contains("Naked"))
-            {
-                albumIv.setImageResource(R.drawable.naked);
-            }
-            else
-            {
+
+            if(!song.getAlbumArt().equals("")) {
+                Bitmap bmAlbum = BitmapFactory.decodeFile(song.getAlbumArt());
+                albumIv.setImageBitmap(bmAlbum);
+
+            } else {
                 albumIv.setImageResource(R.drawable.empty_album_cover);
 
             }
+
         }
 
     }

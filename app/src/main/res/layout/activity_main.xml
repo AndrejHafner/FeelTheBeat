@@ -81,36 +81,41 @@
             android:src="@drawable/empty_album_cover" />
         <TextView
             android:id="@+id/song_artist"
+            android:text=""
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="280dp"
-            android:layout_below="@id/albumCover"
+            android:layout_above="@id/song_name"
+            android:layout_marginBottom="5dp"
             android:textSize="20sp"
             android:textStyle="bold"
             android:layout_centerHorizontal="true"
             />
         <TextView
             android:id="@+id/song_name"
+            android:text=""
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="305dp"
-            android:layout_below="@id/albumCover"
+            android:layout_above="@id/bpm_tv"
+            android:layout_marginBottom="10dp"
             android:textSize="20sp"
             android:textStyle="bold"
             android:layout_centerHorizontal="true"
             />
         <TextView
             android:id="@+id/bpm_tv"
+            android:text=""
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="395dp"
-            android:layout_below="@id/albumCover"
+            android:layout_below="@id/buttons_lay"
             android:textSize="15sp"
+            android:layout_marginBottom="5dp"
             android:layout_centerHorizontal="true"
+            android:layout_alignParentBottom="true"
             />
     </android.widget.RelativeLayout>
 
     <android.widget.RelativeLayout
+        android:id="@+id/buttons_lay"
         android:layout_width="match_parent"
         android:layout_height="84dp"
         android:layout_alignParentBottom="true"

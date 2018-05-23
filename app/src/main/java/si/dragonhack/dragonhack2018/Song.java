@@ -12,6 +12,7 @@ public class Song {
     private int bpm;
     private Uri pathUri;
     private long id;
+    private String albumArt;
 
 
     public long getId() {
@@ -22,13 +23,23 @@ public class Song {
         this.id = id;
     }
 
-    public Song(String title, String artist, int bpm, Uri pathUri, long id) {
+    public Song(String title, String artist, int bpm, Uri pathUri, long id, String albumArt) {
         this.title = title;
         this.artist = artist;
         this.bpm = bpm;
         this.pathUri = pathUri;
         this.id = id;
+        this.albumArt = albumArt;
 
+    }
+
+
+    public String getAlbumArt() {
+        return albumArt;
+    }
+
+    public void setAlbumArt(String albumArt) {
+        this.albumArt = albumArt;
     }
 
     public Uri getPathUri() {
@@ -72,6 +83,7 @@ public class Song {
             obj.put("bpm", this.getBpm());
             obj.put("pathUri", this.getPathUri());
             obj.put("id", this.getId());
+            obj.put("albumArt", this.getAlbumArt());
 
             return obj;
 
@@ -84,7 +96,13 @@ public class Song {
 
     public static Song toSong(JSONObject obj) {
         try {
-           return new Song(obj.getString("title"), obj.getString("artist"), obj.getInt("bpm"), Uri.parse(obj.getString(("pathUri"))),obj.getLong("id"));
+           return new Song(obj.getString("title"),
+                           obj.getString("artist"),
+                           obj.getInt("bpm"),
+                           Uri.parse(obj.getString(("pathUri"))),
+                           obj.getLong("id"),
+                           obj.getString("albumArt"));
+
         } catch (JSONException e) {
             e.printStackTrace();
         }

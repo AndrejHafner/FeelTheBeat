@@ -51,7 +51,7 @@ public class MusicManager implements OnStepDetected {
     int currentSongIdx = 1;
     private int bpm = 100;
     private int songStartedBpm = 0;
-    private boolean isPlaying;
+    private boolean isPlaying = false;
     private boolean isStarted;
     private long secondsLasted;
     private long secondsStarted;
@@ -132,6 +132,10 @@ public class MusicManager implements OnStepDetected {
 //        mp.release();
         publishSongChangedhanged(MusicEvents.STOPPED,currentSong);
 
+    }
+
+    boolean isPlaying() {
+        return isPlaying;
     }
 
     void changeSong(boolean previous)
